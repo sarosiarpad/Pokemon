@@ -17,7 +17,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Ellenőrzés: felhasználónév és jelszó egyezése
-    $user = $storage->getUserByUsername($username);
+    foreach($storage->getAllUsers() as $storedUser){
+        if($username == $storedUser['username']){
+            $user = $storedUser;
+            break;
+        }
+    }
     if (!$user || $user['password'] !== $password) {
         echo "Hibás felhasználónév vagy jelszó!";
         exit();
@@ -25,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Felhasználó bejelentkeztetése
     $_SESSION['user'] = $user;
-    $_SESSION['user_index'] = array_search($user, $storage->getAllUsers());
+    $_SESSION['userId'] = array_search($user, $storage->getAllUsers());
 
     // Átirányítás a főoldalra
     header('Location: index.php');

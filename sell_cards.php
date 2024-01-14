@@ -3,10 +3,11 @@ require 'storage.php';
 
 session_start();
 $current_user = $_SESSION['user'];
+$userId = $_SESSION['userId'];
 $storage = $_SESSION['storage'];
 
-function generateSellPage($current_user, $storage){
-    $cards = $storage->getUserCards($current_user);
+function generateSellPage($current_user, $storage, $userId){
+    $cards = $storage->getUserCards($userId);
     $html = "";
 
     foreach($cards as $cardId => $card){
@@ -16,9 +17,10 @@ function generateSellPage($current_user, $storage){
 }
 
 function generateCardHTML($cardId, $card, $current_user, $storage){
-    $price = (int)$card['price'] / 90;
+    $price = (int)$card['price'];
+    $sellPrice = $price * 0.9;
 
-    $sellButton = "<a href='sell.php?cardId=$cardId'><span class='card-buy'><span class='icon'>💰</span>Eladási ár: {$price}</span></a>";
+    $sellButton = "<a href='sell.php?cardId=$cardId'><span class='card-buy'><span class='icon'>💰</span>Eladási ár: {$sellPrice}</span></a>";
 
     return "
         <div class='pokemon-card'>
@@ -50,6 +52,8 @@ function generateCardHTML($cardId, $card, $current_user, $storage){
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kártyák eladása</title>
+    <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/cards.css">
 </head>
 <body>
     <header>
@@ -63,7 +67,7 @@ function generateCardHTML($cardId, $card, $current_user, $storage){
         </nav>
     </header>
     <div id="content">
-        <?php echo generateSellPage($current_user, $storage); ?>
+        <?php echo generateSellPage($current_user, $storage, $userId); ?>
     </div>
 </body>
 </html>

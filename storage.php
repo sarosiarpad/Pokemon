@@ -40,15 +40,15 @@ class Storage
         return $this->data['cards'][$cardId] ?? null;
     }
 
-    public function getUserCards($user){
-        $userCards = $this->data['users'][$user]['cards'] ?? [];
+    public function getUserCards($userId){
+        $userCards = $this->data['users'][$userId]['cards'] ?? [];
 
-    $result = [];
-    foreach ($userCards as $cardId) {
-        $result[$cardId] = $this->getCardById($cardId);
-    }
+        $result = [];
+        foreach ($userCards as $cardId) {
+            $result[$cardId] = $this->getCardById($cardId);
+        }
 
-    return $result;
+        return $result;
     }
 
     public function getAllUsers()
@@ -56,14 +56,9 @@ class Storage
         return $this->data['users'];
     }
 
-    public function getUserByUsername($username)
+    public function getUserById($userId)
     {
-        foreach ($this->data['users'] as $user) {
-            if ($user['username'] === $username) {
-                return $user;
-            }
-        }
-        return null;
+        return $this->data['users'][$userId];
     }
 
     public function saveUser($user)
@@ -78,9 +73,9 @@ class Storage
         $this->saveData();
     }
 
-    public function buyCard($username, $cardId)
+    public function buyCard($userId, $cardId)
     {
-        $user = $this->getUserByUsername($username);
+        $user = $this->getUserById($userId);
 
         if (!$user) {
             return "A felhasználó nem található.";
@@ -96,13 +91,13 @@ class Storage
             return "Elérted a kártyalimitet, nem vásárolhatsz több kártyát!";
         }
 
-        $userKey = array_search($user, $this->data['users']);
-        $this->data['users'][$userKey]['money'] -= $card['price'];
-        $this->data['users'][$userKey]['cards'][] = $cardId;
+        $this->data['users'][$userId]['money'] -= $card['price'];
+        $this->data['users'][$userId]['cards'][] = $cardId;
+        unset($this->data['users'][0]['cards'][$cardId]);
 
         $this->saveData();
 
-        $_SESSION['user'] = $this->data['users'][$userKey];
+        $_SESSION['user'] = $this->data['users'][$userId];
 
         return "Kártya sikeresen megvásárolva!";
     }

@@ -29,7 +29,7 @@ function generateCardHTML($cardId, $card, $current_user, $storage)
 {
     $buyButton = '';
     if ($current_user) {
-        $admin = $storage->getUserByUsername("admin");
+        $admin = $storage->getUserById(0);
         foreach($admin['cards'] as $adminCard){
             if($cardId == $adminCard){
                 $buyButton = "<a href='buy.php?cardId=$cardId'><span class='card-buy'><span class='icon'>💰</span>{$card['price']}</span></a>";

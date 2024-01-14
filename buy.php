@@ -2,7 +2,7 @@
 require 'storage.php';
 
 session_start();
-$current_user = isset($_SESSION['user']) ? $_SESSION['user'] : null;
+$userId = $_SESSION['userId'];
 $storage = $_SESSION['storage'];
 
 if (isset($_GET['cardId'])) {
@@ -14,8 +14,8 @@ if (isset($_GET['cardId'])) {
     // Ellenőrizzük, hogy a kártya létezik-e
     if ($cardDetails) {
         // Ellenőrizzük, hogy a felhasználó be van jelentkezve
-        if ($current_user) {
-            $message = $storage->buyCard($current_user['username'], $cardId);
+        if ($userId) {
+            $message = $storage->buyCard($userId, $cardId);
             echo $message;
         } else {
             echo "Nincs bejelentkezve senki.";

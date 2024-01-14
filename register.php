@@ -29,9 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Ellenőrzés: felhasználónév egyedisége
-    if ($storage->getUserByUsername($username)) {
-        echo "A felhasználónév már foglalt!";
-        exit();
+    foreach($storage->getAllUsers() as $user){
+        if ($user['username'] == $username) {
+            echo "A felhasználónév már foglalt!";
+            exit();
+        }
     }
 
     // Felhasználó létrehozása és tárolása
@@ -47,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $storage->saveUser($user);
 
     $_SESSION['user'] = $user;
-    $_SESSION['userIndex'] = array_search($user, $storage->getAllUsers());
+    $_SESSION['userId'] = array_search($user, $storage->getAllUsers());
     $_SESSION['storage'] = $storage;
 
     header('Location: index.php');
